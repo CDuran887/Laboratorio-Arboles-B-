@@ -28,7 +28,7 @@ public class Busqueda {
         }
         while (!nodoActual.esHoja()) {
             int i = 0;
-            while (i < nodoActual.claves.size() && nombre.compareTo(nodoActual.claves.get(i)) > 0) {
+            while (i < nodoActual.claves.size() &&  nombre.compareToIgnoreCase(nodoActual.claves.get(i)) >= 0){
                 i++;
             }
             nodoActual = nodoActual.hijos.get(i);
