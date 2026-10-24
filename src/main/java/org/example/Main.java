@@ -10,7 +10,11 @@ public class Main {
 
         int op;
         do {
-            System.out.println("\n1) Insertar  2) Buscar  3) Eliminar  4) Imprimir  5) Salir");
+            System.out.println("\n1) Insertar" +
+                    "\n2) Buscar" +
+                    "\n3) Eliminar" +
+                    "\n4) Imprimir" +
+                    "\n5) Salir");
             System.out.print("Opcion: ");
             op = leerEntero(sc);
             switch (op) {
@@ -35,9 +39,9 @@ public class Main {
 
     static String pedirNombre(Scanner sc) {
         System.out.print("Nombre: ");
-        String n = sc.nextLine().trim();
-        if (n.isEmpty()) { System.out.println("El nombre no puede estar vacio."); return null; }
-        return n;
+        String nombre = sc.nextLine().trim();
+        if (nombre.isEmpty() || nombre.length() > 15 || nombre.contains(" ")) { System.out.println("El nombre no puede estar vacio, no puede tener espacios y debe tener máximo 15 caracteres."); return null; }
+        return nombre;
     }
 
     static int leerEntero(Scanner sc) {

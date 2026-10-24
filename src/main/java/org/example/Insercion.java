@@ -43,6 +43,7 @@ public class Insercion {
             arbol.raiz.claves.add(nombre);
             Trazabilidad.log("INSERCION", "Árbol vacío: se crea la raíz (hoja) " + texto(arbol.raiz)
                     + " con '" + nombre + "'");
+            validarArbol();
             return true;
         }
  
@@ -65,8 +66,16 @@ public class Insercion {
             arbol.raiz = nuevaRaiz;
             Trazabilidad.log("NUEVA RAIZ", "Nueva raíz creada (altura +1): " + texto(nuevaRaiz));
         }
- 
+
+        validarArbol();
         return true;
+    }
+
+    private void validarArbol() {
+        if (!Validador.validarPropiedades(arbol)) {
+            Trazabilidad.log("ERROR", "El árbol no cumple sus propiedades después de insertar.");
+            throw new IllegalStateException("El árbol B+ quedó inválido después de insertar.");
+        }
     }
  
     private ResultadoSplit insertarRecursivo(Nodo nodo, String nombre, EstadoInsercion estado) {

@@ -67,6 +67,7 @@ public class Eliminacion {
             }
 
             resultado();
+            validarArbol();
             return true;
         }
 
@@ -83,6 +84,7 @@ public class Eliminacion {
                     + " clave(s) (minimo " + arbol.minClavesHoja + "). No hay underflow, no se requiere prestamo ni fusion.");
 
             resultado();
+            validarArbol();
             return true;
         }
 
@@ -93,7 +95,15 @@ public class Eliminacion {
         resolverUnderflow(hoja, false);
         resultado();
 
+        validarArbol();
         return true;
+    }
+
+    private void validarArbol() {
+        if (!Validador.validarPropiedades(arbol)) {
+            Trazabilidad.log("ERROR", "El árbol no cumple sus propiedades después de eliminar.");
+            throw new IllegalStateException("El árbol B+ quedó inválido después de eliminar.");
+        }
     }
 
     // =========================================================
