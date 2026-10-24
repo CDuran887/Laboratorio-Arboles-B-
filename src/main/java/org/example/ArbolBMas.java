@@ -22,8 +22,8 @@ public class ArbolBMas {
         this.impresor    = new Impresor(this);
     }
 
-    public boolean insertar(String n) { return insercion.insertar(n); }
-    public boolean eliminar(String n) { return eliminacion.eliminar(n); }
-    public boolean buscar(String n)   { return busqueda.buscar(n); }
+    public boolean insertar(String nombre) { return insercion.insertar(nombre); }
+    public boolean eliminar(String nombre) { return eliminacion.eliminar(nombre); }
+    public boolean buscar(String nombre)   { return busqueda.buscar(nombre); }
     public void imprimir()            { impresor.imprimir(); }
 }
