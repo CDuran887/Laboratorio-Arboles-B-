@@ -86,10 +86,6 @@ public class Impresor {
 
     // ---------- Dibujo ----------
 
-    /**
-     * Dibuja el nodo dentro del area [inicio, inicio + ancho del subarbol)
-     * y devuelve la columna central de su etiqueta.
-     */
     private int colocar(Nodo nodo, int inicio, int nivel, char[][] g) {
         String texto = etiqueta(nodo);
         int w = texto.length();
@@ -102,7 +98,6 @@ public class Impresor {
             return izq + w / 2;
         }
 
-        // Los hijos se reparten de izquierda a derecha, centrados en el area
         int totalHijos = SEPARACION * (nodo.hijos.size() - 1);
         for (Nodo h : nodo.hijos) {
             totalHijos += anchos.get(h);
@@ -118,13 +113,11 @@ public class Impresor {
         int primero = centros.get(0);
         int ultimo = centros.get(centros.size() - 1);
 
-        // El padre queda centrado sobre sus hijos (sin salirse de su area)
         int izq = (primero + ultimo) / 2 - w / 2;
         izq = Math.max(inicio, Math.min(izq, inicio + areaW - w));
         escribir(g, fila, izq, texto);
         int centroPadre = izq + w / 2;
 
-        // Conectores
         g[fila + 1][centroPadre] = '|';
 
         int desde = Math.min(centroPadre, primero);

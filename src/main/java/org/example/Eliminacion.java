@@ -2,22 +2,17 @@ package org.example;
 
 public class Eliminacion {
 
-    // =========================================================
-    // CONFIGURACION Y ATRIBUTOS
-    // =========================================================
 
     static final String CASO_1  = "CASO 1 - ELIMINACION SIMPLE";
     static final String CASO_2A = "CASO 2a - PRESTAMO";
     static final String CASO_2B = "CASO 2b - MERGE";
     static final String CASO_3  = "CASO 3 - PROPAGACION";
 
-    // Repara los punteros padre antes de cada eliminacion.
     private static final boolean REPARAR_PADRES = true;
 
     private final ArbolBMas arbol;
     private final Busqueda busqueda;
 
-    // Caso de mayor rango registrado durante la eliminacion.
     String ultimoCaso = null;
     private int rangoCaso = 0;
 
@@ -55,7 +50,6 @@ public class Eliminacion {
 
         Trazabilidad.log("ELIMINAR", "Se quita '" + clave + "' de la hoja " + antes + " -> queda " + fmt(hoja));
 
-        // Caso 1: la raiz es una hoja.
         if (hoja == arbol.raiz) {
             marcarCaso(CASO_1);
 
@@ -71,12 +65,10 @@ public class Eliminacion {
             return true;
         }
 
-        // Actualiza el separador si cambio la menor clave de la hoja.
         if (pos == 0 && !hoja.claves.isEmpty()) {
             actualizarSeparador(hoja, clave);
         }
 
-        // Caso 1: la hoja conserva el minimo de claves.
         if (hoja.claves.size() >= arbol.minClavesHoja) {
             marcarCaso(CASO_1);
 
@@ -88,7 +80,6 @@ public class Eliminacion {
             return true;
         }
 
-        // La hoja queda por debajo del minimo permitido.
         Trazabilidad.log("UNDERFLOW", "La hoja " + fmt(hoja) + " tiene " + hoja.claves.size()
                 + " clave(s) y el minimo es " + arbol.minClavesHoja + ".");
 
@@ -113,7 +104,6 @@ public class Eliminacion {
 
     private void resolverUnderflow(Nodo n, boolean propagado) {
 
-        // Caso 3: la raiz queda sin claves y se reduce la altura.
         if (n == arbol.raiz) {
             if (!n.esHoja && n.claves.isEmpty()) {
                 Nodo nueva = n.hijos.get(0);
@@ -128,7 +118,6 @@ public class Eliminacion {
             return;
         }
 
-        // Si el nodo cumple el minimo, no necesita ajustes.
         int min = n.esHoja ? arbol.minClavesHoja : arbol.minClavesInterno;
 
         if (n.claves.size() >= min) return;
@@ -145,13 +134,11 @@ public class Eliminacion {
         // CASO 2a: PRESTAMO
         // -----------------------------------------------------
 
-        // Intenta recibir una clave del hermano izquierdo.
         if (izq != null && izq.claves.size() > min) {
             prestarDeIzquierdo(n, izq, p, idx, propagado);
             return;
         }
 
-        // Intenta recibir una clave del hermano derecho.
         if (der != null && der.claves.size() > min) {
             prestarDeDerecho(n, der, p, idx, propagado);
             return;
@@ -171,7 +158,6 @@ public class Eliminacion {
             fusionar(n, der, p, idx);
         }
 
-        // Comprueba si el padre quedo por debajo del minimo.
         boolean padreEsRaiz = (p == arbol.raiz);
 
         boolean padreEnProblema = padreEsRaiz ? p.claves.isEmpty()
@@ -190,7 +176,6 @@ public class Eliminacion {
                     + p.claves.size() + " clave(s), cumple el minimo. Fin.");
         }
 
-        // Caso 3: si el padre tiene underflow, repite el proceso un nivel arriba.
         if (padreEnProblema) {
             resolverUnderflow(p, true);
         }
@@ -206,7 +191,6 @@ public class Eliminacion {
 
         if (n.esHoja) {
 
-            // La hoja recibe la ultima clave del hermano izquierdo.
             String prestada = izq.claves.remove(izq.claves.size() - 1);
             n.claves.add(0, prestada);
 
@@ -219,7 +203,6 @@ public class Eliminacion {
 
         } else {
 
-            // En nodos internos se mueve una clave y un hijo.
             String bajaDelPadre = p.claves.get(idx - 1);
 
             Nodo hijoMovido = izq.hijos.remove(izq.hijos.size() - 1);
@@ -247,7 +230,6 @@ public class Eliminacion {
 
         if (n.esHoja) {
 
-            // La hoja recibe la primera clave del hermano derecho.
             String prestada = der.claves.remove(0);
             n.claves.add(prestada);
 
@@ -260,7 +242,6 @@ public class Eliminacion {
 
         } else {
 
-            // En nodos internos se mueve una clave y un hijo.
             String bajaDelPadre = p.claves.get(idx);
 
             Nodo hijoMovido = der.hijos.remove(0);
@@ -288,7 +269,6 @@ public class Eliminacion {
 
         if (izq.esHoja) {
 
-            // En las hojas, el separador no se agrega como dato.
             izq.claves.addAll(der.claves);
             izq.siguiente = der.siguiente;
 
@@ -297,7 +277,6 @@ public class Eliminacion {
 
         } else {
 
-            // En los nodos internos, el separador baja a la fusion.
             izq.claves.add(separador);
             izq.claves.addAll(der.claves);
 
@@ -310,7 +289,6 @@ public class Eliminacion {
                     + antesDer + " = " + fmt(izq) + ".");
         }
 
-        // Elimina del padre el separador y el puntero al nodo absorbido.
         p.claves.remove(sep);
         p.hijos.remove(sep + 1);
 
@@ -324,7 +302,6 @@ public class Eliminacion {
     // METODOS AUXILIARES
     // =========================================================
 
-    // Actualiza el separador cuando cambia la menor clave de una hoja.
     private void actualizarSeparador(Nodo hoja, String viejaClave) {
         String nueva = hoja.claves.get(0);
         Nodo actual = hoja;
@@ -347,7 +324,6 @@ public class Eliminacion {
         }
     }
 
-    // Busca la posicion de una clave dentro de una hoja.
     private int posicionEnHoja(Nodo hoja, String nombre) {
         for (int i = 0; i < hoja.claves.size(); i++) {
             if (cmp(hoja.claves.get(i), nombre) == 0) return i;
@@ -356,7 +332,6 @@ public class Eliminacion {
         return -1;
     }
 
-    // Obtiene la posicion del nodo entre los hijos de su padre.
     private int indiceEnPadre(Nodo n) {
         Nodo p = n.padre;
 
@@ -367,7 +342,6 @@ public class Eliminacion {
         throw new IllegalStateException("El nodo " + fmt(n) + " no aparece entre los hijos de su padre.");
     }
 
-    // Repara recursivamente los punteros padre.
     private void repararPadres(Nodo n, Nodo padre) {
         n.padre = padre;
 
@@ -376,7 +350,6 @@ public class Eliminacion {
         }
     }
 
-    // Conserva el caso de mayor rango registrado.
     private void marcarCaso(String caso) {
         int r = rango(caso);
 
@@ -395,7 +368,6 @@ public class Eliminacion {
         }
     }
 
-    // Registra el resultado de la eliminacion.
     private void resultado() {
         Trazabilidad.log("RESULTADO", "Escenario resuelto: " + ultimoCaso);
     }
@@ -404,7 +376,6 @@ public class Eliminacion {
         return a.compareToIgnoreCase(b);
     }
 
-    // Representa las claves de un nodo para los mensajes de trazabilidad.
     private static String fmt(Nodo n) {
         return "[" + String.join("|", n.claves) + "]";
     }
